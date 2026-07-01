@@ -15,15 +15,15 @@ body{
 }
 
 .container{
-    max-width:500px;
+    max-width:550px;
     margin:auto;
 }
 
 .card{
-    background:white;
+    background:#fff;
     padding:20px;
     border-radius:15px;
-    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+    box-shadow:0 2px 10px rgba(0,0,0,0.10);
 }
 
 h1{
@@ -31,22 +31,64 @@ h1{
     color:#0078d4;
 }
 
+.grupo{
+    margin-top:15px;
+}
+
+.titulo{
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.linha{
+    display:flex;
+    gap:8px;
+}
+
 button{
-    width:100%;
-    padding:15px;
-    margin-top:10px;
     border:none;
     border-radius:10px;
-    font-size:18px;
+    padding:12px;
+    font-size:16px;
     font-weight:bold;
     color:white;
     cursor:pointer;
 }
 
-.entrada{background:#0078d4;}
-.almoco{background:#ff9800;}
-.retorno{background:#4caf50;}
-.limpar{background:#666;}
+.btn-principal{
+    flex:1;
+}
+
+.btn-manual{
+    background:#555;
+}
+
+.entrada{
+    background:#0078d4;
+}
+
+.almoco{
+    background:#ff9800;
+}
+
+.retorno{
+    background:#4caf50;
+}
+
+.limpar{
+    background:#666;
+    width:100%;
+    margin-top:15px;
+}
+
+input[type="time"]{
+    width:100%;
+    padding:10px;
+    margin-top:8px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    display:none;
+}
 
 .info{
     margin-top:20px;
@@ -54,32 +96,15 @@ button{
 }
 
 .info p{
-    margin:10px 0;
+    margin:8px 0;
 }
 
 .saida{
     margin-top:20px;
     text-align:center;
-    font-size:32px;
+    font-size:30px;
     font-weight:bold;
     color:#2e7d32;
-}
-
-.alerta{
-    margin-top:10px;
-    padding:12px;
-    border-radius:8px;
-    background:#ffdddd;
-    color:#b00020;
-    font-weight:bold;
-}
-
-.ok{
-    margin-top:10px;
-    padding:12px;
-    border-radius:8px;
-    background:#e8f5e9;
-    color:#1b5e20;
 }
 
 .contador{
@@ -88,9 +113,25 @@ button{
     font-size:20px;
     font-weight:bold;
 }
+
+.alerta{
+    margin-top:10px;
+    padding:10px;
+    border-radius:8px;
+    background:#ffdddd;
+    color:#b00020;
+    font-weight:bold;
+}
+
+.ok{
+    margin-top:10px;
+    padding:10px;
+    border-radius:8px;
+    background:#e8f5e9;
+    color:#1b5e20;
+}
 </style>
 </head>
-
 <body>
 
 <div class="container">
@@ -98,19 +139,65 @@ button{
 
 <h1>Controle de Horário</h1>
 
-<button class="entrada" onclick="registrar('entrada')">
-📥 Entrei Agora
+<div class="grupo">
+<div class="titulo">Entrada</div>
+
+<div class="linha">
+<button class="entrada btn-principal"
+onclick="registrarAgora('entrada')">
+📥 Agora
 </button>
 
-<button class="almoco" onclick="registrar('saidaAlmoco')">
-🍽️ Saí para Almoço
+<button class="btn-manual"
+onclick="mostrarManual('entradaManual')">
+⌚ Manual
+</button>
+</div>
+
+<input type="time" id="entradaManual"
+onchange="registrarManual('entrada',this.value)">
+</div>
+
+<div class="grupo">
+<div class="titulo">Saída para Almoço</div>
+
+<div class="linha">
+<button class="almoco btn-principal"
+onclick="registrarAgora('saidaAlmoco')">
+🍽️ Agora
 </button>
 
-<button class="retorno" onclick="registrar('retornoAlmoco')">
-📤 Voltei do Almoço
+<button class="btn-manual"
+onclick="mostrarManual('saidaManual')">
+⌚ Manual
+</button>
+</div>
+
+<input type="time" id="saidaManual"
+onchange="registrarManual('saidaAlmoco',this.value)">
+</div>
+
+<div class="grupo">
+<div class="titulo">Retorno do Almoço</div>
+
+<div class="linha">
+<button class="retorno btn-principal"
+onclick="registrarAgora('retornoAlmoco')">
+📤 Agora
 </button>
 
-<button class="limpar" onclick="limparDia()">
+<button class="btn-manual"
+onclick="mostrarManual('retornoManual')">
+⌚ Manual
+</button>
+</div>
+
+<input type="time" id="retornoManual"
+onchange="registrarManual('retornoAlmoco',this.value)">
+</div>
+
+<button class="limpar"
+onclick="limparDia()">
 🗑️ Limpar Dia
 </button>
 
@@ -137,6 +224,30 @@ function agora(){
     return new Date().toTimeString().substring(0,5);
 }
 
+function registrarAgora(campo){
+    dados[campo] = agora();
+    salvar();
+}
+
+function registrarManual(campo,hora){
+    if(hora){
+        dados[campo] = hora;
+        salvar();
+    }
+}
+
+function mostrarManual(id){
+
+    let campo = document.getElementById(id);
+
+    if(campo.style.display === "block"){
+        campo.style.display = "none";
+    }else{
+        campo.style.display = "block";
+        campo.focus();
+    }
+}
+
 function paraMinutos(hora){
     const [h,m] = hora.split(":").map(Number);
     return h*60+m;
@@ -146,23 +257,9 @@ function paraHora(min){
     let h = Math.floor(min/60);
     let m = min%60;
 
-    return String(h).padStart(2,"0")+":"+
-           String(m).padStart(2,"0");
-}
-
-function registrar(campo){
-
-    let manual = prompt(
-        "Digite um horário no formato HH:MM.\n\nClique em Cancelar para usar o horário atual."
-    );
-
-    if(manual !== null && manual.trim() !== ""){
-        dados[campo] = manual;
-    } else {
-        dados[campo] = agora();
-    }
-
-    salvar();
+    return String(h).padStart(2,"0")
+    + ":"
+    + String(m).padStart(2,"0");
 }
 
 function salvar(){
@@ -170,6 +267,7 @@ function salvar(){
         "controleHorario",
         JSON.stringify(dados)
     );
+
     atualizar();
 }
 
@@ -182,13 +280,13 @@ function limparDia(){
 function atualizar(){
 
     document.getElementById("entrada").innerText =
-        dados.entrada || "-";
+    dados.entrada || "-";
 
     document.getElementById("saidaAlmoco").innerText =
-        dados.saidaAlmoco || "-";
+    dados.saidaAlmoco || "-";
 
     document.getElementById("retornoAlmoco").innerText =
-        dados.retornoAlmoco || "-";
+    dados.retornoAlmoco || "-";
 
     let alertas = [];
 
@@ -202,87 +300,32 @@ function atualizar(){
         ){
 
             let almoco =
-                paraMinutos(dados.retornoAlmoco)
-                - paraMinutos(dados.saidaAlmoco);
+            paraMinutos(dados.retornoAlmoco)
+            -
+            paraMinutos(dados.saidaAlmoco);
 
-            /* mínimo de 1 hora */
             if(almoco < 60){
                 almoco = 60;
             }
 
             horarioSaida =
-                paraMinutos(dados.entrada)
-                + 480
-                + almoco;
-        }
-        else{
+            paraMinutos(dados.entrada)
+            + 480
+            + almoco;
+
+        }else{
 
             horarioSaida =
-                paraMinutos(dados.entrada)
-                + 540;
+            paraMinutos(dados.entrada)
+            + 540;
         }
 
-        document.getElementById("saida")
-            .innerHTML =
-            "Saída prevista<br>" +
-            paraHora(horarioSaida);
-
-        if(paraMinutos(dados.entrada) > 510){
-            alertas.push("⚠ Entrada após 08:30");
-        }
-
-        if(
-            dados.saidaAlmoco &&
-            paraMinutos(dados.saidaAlmoco) < 690
-        ){
-            alertas.push("⚠ Almoço iniciado antes de 11:30");
-        }
-
-        if(
-            dados.retornoAlmoco &&
-            paraMinutos(dados.retornoAlmoco) > 870
-        ){
-            alertas.push("⚠ Retorno após 14:30");
-        }
+        document.getElementById("saida").innerHTML =
+        "Saída prevista<br>" +
+        paraHora(horarioSaida);
 
         let agoraMin =
-            new Date().getHours()*60 +
-            new Date().getMinutes();
+        new Date().getHours()*60 +
+        new Date().getMinutes();
 
-        let faltam = horarioSaida - agoraMin;
-
-        if(faltam > 0){
-            let horas = Math.floor(faltam/60);
-            let minutos = faltam%60;
-
-            document.getElementById("contador")
-            .innerHTML =
-            `⏳ Faltam ${horas}h ${minutos}min para sair`;
-        }else{
-            document.getElementById("contador")
-            .innerHTML =
-            "✅ Jornada concluída";
-        }
-
-    } else {
-
-        document.getElementById("saida").innerHTML="";
-        document.getElementById("contador").innerHTML="";
-    }
-
-    document.getElementById("alertas").innerHTML =
-        alertas.length
-        ? alertas.map(a =>
-            `<div class="alerta">${a}</div>`
-          ).join("")
-        : "<div class='ok'>✅ Nenhum alerta</div>";
-}
-
-atualizar();
-
-setInterval(atualizar,60000);
-
-</script>
-
-</body>
-</html>
+        let faltam =
