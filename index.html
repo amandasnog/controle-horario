@@ -40,6 +40,7 @@ button{
     font-size:18px;
     font-weight:bold;
     color:white;
+    cursor:pointer;
 }
 
 .entrada{background:#0078d4;}
@@ -150,7 +151,17 @@ function paraHora(min){
 }
 
 function registrar(campo){
-    dados[campo] = agora();
+
+    let manual = prompt(
+        "Digite um horário no formato HH:MM.\n\nClique em Cancelar para usar o horário atual."
+    );
+
+    if(manual !== null && manual.trim() !== ""){
+        dados[campo] = manual;
+    } else {
+        dados[campo] = agora();
+    }
+
     salvar();
 }
 
@@ -194,8 +205,8 @@ function atualizar(){
                 paraMinutos(dados.retornoAlmoco)
                 - paraMinutos(dados.saidaAlmoco);
 
-            // Considera no mínimo 1 hora de almoço
-            if (almoco < 60) {
+            /* mínimo de 1 hora */
+            if(almoco < 60){
                 almoco = 60;
             }
 
