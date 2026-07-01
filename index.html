@@ -194,6 +194,11 @@ function atualizar(){
                 paraMinutos(dados.retornoAlmoco)
                 - paraMinutos(dados.saidaAlmoco);
 
+            // Considera no mínimo 1 hora de almoço
+            if (almoco < 60) {
+                almoco = 60;
+            }
+
             horarioSaida =
                 paraMinutos(dados.entrada)
                 + 480
