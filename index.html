@@ -295,7 +295,6 @@ function atualizar(){
                 paraMinutos(dados.retornoAlmoco)
                 - paraMinutos(dados.saidaAlmoco);
 
-            /* mínimo de 1 hora */
             if(almoco < 60){
                 almoco = 60;
             }
@@ -311,6 +310,9 @@ function atualizar(){
                 paraMinutos(dados.entrada)
                 + 540;
         }
+
+        /* SAÍDA MÍNIMA ÀS 17:00 */
+        horarioSaida = Math.max(horarioSaida, 1020);
 
         document.getElementById("saida").innerHTML =
             "Saída prevista<br>" +
