@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Controle de Horário</title>
+<title>Controle particular de Horário</title>
 
 <style>
 body{
@@ -122,7 +122,7 @@ button{
 <div class="container">
 <div class="card">
 
-<h1>Controle de Horário</h1>
+<h1>Controle particular de Horário</h1>
 
 <button class="entrada" onclick="registrar('entrada')">
 📥 Entrei Agora
@@ -197,9 +197,33 @@ function paraHora(min){
            String(m).padStart(2,"0");
 }
 
+function validarHorario(hora){
+
+    const minutos = paraMinutos(hora);
+
+    const minimo = 420;   // 07:00
+    const maximo = 1140;  // 19:00
+
+    if(minutos < minimo || minutos > maximo){
+        alert("O horário deve estar entre 07:00 e 19:00");
+        return false;
+    }
+
+    return true;
+}
+
 function registrar(campo){
-    dados[campo] = agora();
+
+    const horarioAtual = agora();
+
+    if(!validarHorario(horarioAtual)){
+        return;
+    }
+
+    dados[campo] = horarioAtual;
+
     salvar();
+
 }
 
 function mostrarEdicao(){
@@ -234,20 +258,36 @@ function salvarEdicao(){
         document.getElementById("editarRetornoAlmoco").value;
 
     if(entrada){
+
+        if(!validarHorario(entrada)){
+            return;
+        }
+
         dados.entrada = entrada;
     }
 
     if(saida){
+
+        if(!validarHorario(saida)){
+            return;
+        }
+
         dados.saidaAlmoco = saida;
     }
 
     if(retorno){
+
+        if(!validarHorario(retorno)){
+            return;
+        }
+
         dados.retornoAlmoco = retorno;
     }
 
     salvar();
 
     document.getElementById("edicao").style.display = "none";
+
 }
 
 function salvar(){
